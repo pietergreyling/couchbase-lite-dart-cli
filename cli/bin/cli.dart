@@ -6,6 +6,7 @@ import 'package:cbl/cbl.dart';
 import 'package:cbl_dart/cbl_dart.dart';
 
 late final Database db;
+String dbName = "";
 
 main(List<String> args) async {
   Repl repl = Repl(prompt: '>>> ', continuation: '... ', validator: validator);
@@ -13,15 +14,29 @@ main(List<String> args) async {
   // printStringList(args);
 
   if (args.isNotEmpty) {
-    print("-- opening database: ${args[0]}");
+    dbName = args[0];
+    print("-- Database: $dbName");
   }
 
   await for (var x in repl.runAsync()) {
-    if (x.trim().isEmpty) continue;
-    if (x == 'throw;') throw "-- Oh no!";
-    if (x == 'exit;') throw "-- Bye bye";
-    if (x == 'quit;') throw "-- Quiting!";
-    print(x);
+    String replCommand = x.trim();
+    if (replCommand.isEmpty) continue;
+
+    if (replCommand == 'throw;') throw "-- Oh no!";
+    if (replCommand == 'exit;') throw "-- Bye bye";
+    if (replCommand == 'quit;') throw "-- Quiting!";
+
+    // DB operations
+    if (replCommand == 'open;') db = await openDatabase(dbName);
+
+    if (replCommand == 'test;') await saveDocument(db, x);
+
+    if (replCommand == 'list;') await listDocuments(db);
+
+    if (replCommand == 'close;') await closeDatabase(db);
+
+    print(x); // reflect the whole string as entered
+
   }
 }
 
