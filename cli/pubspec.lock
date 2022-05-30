@@ -36,6 +36,55 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  cbl:
+    dependency: transitive
+    description:
+      name: cbl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.0"
+  cbl_dart:
+    dependency: "direct main"
+    description:
+      name: cbl_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0+0"
+  cbl_ffi:
+    dependency: transitive
+    description:
+      name: cbl_ffi
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.7.2+3"
+  cbl_libcblite_api:
+    dependency: transitive
+    description:
+      name: cbl_libcblite_api
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.1"
+  cbl_libcblitedart_api:
+    dependency: transitive
+    description:
+      name: cbl_libcblitedart_api
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
+  characters:
+    dependency: transitive
+    description:
+      name: characters
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
+  cli_repl:
+    dependency: "direct main"
+    description:
+      name: cli_repl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.2"
   collection:
     dependency: transitive
     description:
@@ -64,6 +113,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.0.2"
+  ffi:
+    dependency: transitive
+    description:
+      name: ffi
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.2.1"
   file:
     dependency: transitive
     description:
@@ -253,6 +309,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0+2"
   term_glyph:
     dependency: transitive
     description:
