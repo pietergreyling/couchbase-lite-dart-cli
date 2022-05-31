@@ -31,7 +31,11 @@ main(List<String> args) async {
 
     if (replCommand == 'test;') await saveDocument(db, x);
 
+    if (replCommand.contains('save;')) await saveDocument(db, x);
+
     if (replCommand == 'list;') await listDocuments(db);
+
+    if (replCommand == 'listall;') await listAllDocuments(db);
 
     if (replCommand == 'close;') await closeDatabase(db);
 
@@ -83,6 +87,24 @@ Future<void> listDocuments(Database db) async {
         Expression.string('text'),
       ))
       .orderBy(Ordering.property('createdAt').descending());
+
+  final resultSet = await query.execute();
+  int documentCount = 0;
+
+  await for (final result in resultSet.asStream()) {
+    documentCount++;
+    print(result.toJson());
+  }
+
+  print('$documentCount documents found');
+}
+
+Future<void> listAllDocuments(Database db) async {
+  final query = const QueryBuilder()
+      .select(
+        SelectResult.expression(Meta.id),
+      )
+      .from(DataSource.database(db));
 
   final resultSet = await query.execute();
   int documentCount = 0;
