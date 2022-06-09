@@ -1,9 +1,9 @@
 # couchbase-lite-dart-cli
 
-Commandline interface Couchbase Lite utility built with the Dart programming language.
+Commandline interface Couchbase Lite POC (proof of concept) utility built with the Dart programming language.
 
 
-How to run the program:
+###How to run the program:
 
 `
 $ dart cli/bin/cli.dart db/MY_TEST_DB
@@ -44,3 +44,11 @@ close;
 `
 quit;
 `
+###An example Dart CLI session
+
+![An example Dart CLI session](./screenshots/dart-cli-session-screenshot.png?raw=true)
+
+###Verification with the official CBLite command-line tool
+
+![Verification with the official CBLite command-line tool](./screenshots/cblite-session-screenshot.png?raw=true)
+
