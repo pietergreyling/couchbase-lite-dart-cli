@@ -53,5 +53,11 @@ quit;
 
 ### Verification with the official CBLite command-line tool
 
+[cblite Tool Documentation](https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md)
+
+`
+cblite ls --body db/MY_TEST_DB.cblite2
+`
+
 ![Verification with the official CBLite command-line tool](./screenshots/cblite-session-screenshot.png?raw=true)
 
