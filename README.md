@@ -1,6 +1,13 @@
-# couchbase-lite-dart-cli
+# Couchbase Lite Dart CLI
 
 Commandline interface Couchbase Lite POC (proof of concept) utility built with the Dart programming language.
+
+This code uses the [cbl-dart community package](https://pub.dev/packages/cbl) which implements Couchbase Lite for Dart and Flutter. 
+
+* [https://pub.dev/packages/cbl](https://pub.dev/packages/cbl)
+* [https://github.com/cbl-dart/cbl-dart](https://github.com/cbl-dart/cbl-dart)
+
+
 
 
 ### How to run the program:
