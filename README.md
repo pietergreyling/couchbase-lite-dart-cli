@@ -58,7 +58,7 @@ quit;
 ![An example Dart CLI session](./screenshots/dart-cli-session-screenshot.png?raw=true)
 
 
-### Verification with the official CBLite command-line tool
+### Verification with the CBLite command-line tool
 
 [cblite Tool Documentation](https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md)
 
