@@ -13,7 +13,7 @@ String? dbDirectory;
 main(List<String> args) async {
   await initCouchbaseLite();
 
-  Repl repl = Repl(continuation: '... ', validator: validator);
+  final Repl repl = Repl(continuation: '... ', validator: validator);
 
   // printStringList(args);
 
@@ -28,24 +28,24 @@ main(List<String> args) async {
 
   printPrompt();
 
-  await for (var x in repl.runAsync()) {
-    String replCommand = x.substring(0, x.length - 1).trim();
-    if (replCommand.isEmpty) continue;
-
-    if (replCommand == 'throw') throw "-- Oh no!";
-    if (replCommand == 'exit') {
-      printResponse("Bye bye");
-      break;
-    }
-    if (replCommand == 'quit') {
-      printResponse("Quiting!");
-      break;
-    }
+  await for (final rawCommand in repl.runAsync()) {
+    final String command =
+        rawCommand.substring(0, rawCommand.length - 1).trim();
+    if (command.isEmpty) continue;
 
     try {
+      if (command == 'throw') {
+        throw "-- Oh no!";
+      } else if (command == 'exit') {
+        printResponse("Bye bye");
+        break;
+      } else if (command == 'quit') {
+        printResponse("Quiting!");
+        break;
+      }
       // DB operations
-      if (replCommand.startsWith('open')) {
-        final path = replCommand.substring(4).trim();
+      else if (command.startsWith('open')) {
+        final path = command.substring(4).trim();
         if (path.isNotEmpty) {
           setDbLocation(path);
         }
@@ -56,24 +56,22 @@ main(List<String> args) async {
         }
         db = await openDatabase(dbName!, dbDirectory!);
         printResponse('Opened database at ${p.relative(db!.path!)}.');
-      }
-
-      if (replCommand == 'test') await saveDocument(useDb(), x);
-
-      if (replCommand.contains('save')) await saveDocument(useDb(), x);
-
-      if (replCommand == 'list') await listDocuments(useDb());
-
-      if (replCommand == 'listall') await listAllDocuments(useDb());
-
-      if (replCommand == 'delete') {
+      } else if (command == 'test') {
+        await saveDocument(useDb(), rawCommand);
+      } else if (command.contains('save')) {
+        await saveDocument(useDb(), rawCommand);
+      } else if (command == 'list') {
+        await listDocuments(useDb());
+      } else if (command == 'listall') {
+        await listAllDocuments(useDb());
+      } else if (command == 'delete') {
         await deleteDatabase(useDb());
         db = null;
-      }
-
-      if (replCommand == 'close') {
+      } else if (command == 'close') {
         await closeDatabase(useDb());
         db = null;
+      } else {
+        printResponse("Unknown command: $command");
       }
     } on DatabaseNotOpenException {
       printResponse('Database is not not open.');
