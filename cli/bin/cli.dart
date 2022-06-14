@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:cbl/cbl.dart';
 import 'package:cbl_dart/cbl_dart.dart';
@@ -53,6 +53,14 @@ void printStringList(List<String> list) {
   print(list);
 }
 
+void printJson(Object? value) {
+  print(const JsonEncoder.withIndent('  ').convert(value));
+}
+
+void printResult(Result result) {
+  printJson(result.toPlainMap());
+}
+
 Future<void> initCouchbaseLite() async {
   await CouchbaseLiteDart.init(edition: Edition.enterprise);
 
@@ -77,7 +85,8 @@ Future<void> saveDocument(Database db, String doctext) async {
 
   await db.saveDocument(doc);
 
-  print('Document ${doc.id} stored: ${doc.toJson()}');
+  print('Document ${doc.id} stored:');
+  printJson(doc.toPlainMap());
 }
 
 Future<void> listDocuments(Database db) async {
@@ -98,7 +107,7 @@ Future<void> listDocuments(Database db) async {
 
   await for (final result in resultSet.asStream()) {
     documentCount++;
-    print(result.toJson());
+    printResult(result);
   }
 
   print('$documentCount documents found');
@@ -116,7 +125,7 @@ Future<void> listAllDocuments(Database db) async {
 
   await for (final result in resultSet.asStream()) {
     documentCount++;
-    print(result.toJson());
+    printResult(result);
   }
 
   print('$documentCount documents found');

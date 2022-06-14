@@ -104,3 +104,4 @@ fastlane/readme.md
 # Dart
 .dart_tool/
 .packages
+!/bin/
