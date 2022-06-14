@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cbl/cbl.dart';
 import 'package:cbl_dart/cbl_dart.dart';
@@ -10,7 +11,7 @@ String dbName = "";
 main(List<String> args) async {
   await initCouchbaseLite();
 
-  Repl repl = Repl(prompt: '>>> ', continuation: '... ', validator: validator);
+  Repl repl = Repl(continuation: '... ', validator: validator);
 
   // printStringList(args);
 
@@ -18,6 +19,8 @@ main(List<String> args) async {
     dbName = args[0];
     print("-- Database: $dbName");
   }
+
+  printPrompt();
 
   await for (var x in repl.runAsync()) {
     String replCommand = x.trim();
@@ -40,9 +43,12 @@ main(List<String> args) async {
 
     if (replCommand == 'close;') await closeDatabase(db);
 
-    print(x); // reflect the whole string as entered
-
+    printPrompt();
   }
+}
+
+void printPrompt() {
+  stdout.write('>>> ');
 }
 
 bool validator(String str) {
