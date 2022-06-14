@@ -1,14 +1,15 @@
 import 'dart:io';
 
-// import 'package:cli/cli.dart' as cli;
-import 'package:cli_repl/cli_repl.dart';
 import 'package:cbl/cbl.dart';
 import 'package:cbl_dart/cbl_dart.dart';
+import 'package:cli_repl/cli_repl.dart';
 
 late final Database db;
 String dbName = "";
 
 main(List<String> args) async {
+  await initCouchbaseLite();
+
   Repl repl = Repl(prompt: '>>> ', continuation: '... ', validator: validator);
 
   // printStringList(args);
@@ -52,11 +53,15 @@ void printStringList(List<String> list) {
   print(list);
 }
 
-Future<Database> openDatabase(String dbname) async {
-  // await CouchbaseLiteDart.init(edition: Edition.community);
+Future<void> initCouchbaseLite() async {
   await CouchbaseLiteDart.init(edition: Edition.enterprise);
-  Database db = await Database.openAsync(dbname);
-  return db;
+
+  // Suppress warning that file logging is not configured.
+  Database.log.console.level = LogLevel.error;
+}
+
+Future<Database> openDatabase(String dbname) async {
+  return await Database.openAsync(dbname);
 }
 
 Future<void> closeDatabase(Database db) async {
