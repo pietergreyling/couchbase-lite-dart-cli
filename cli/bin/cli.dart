@@ -1,47 +1,92 @@
+import 'dart:convert';
 import 'dart:io';
 
-// import 'package:cli/cli.dart' as cli;
-import 'package:cli_repl/cli_repl.dart';
 import 'package:cbl/cbl.dart';
 import 'package:cbl_dart/cbl_dart.dart';
+import 'package:cli_repl/cli_repl.dart';
+import 'package:path/path.dart' as p;
 
-late final Database db;
-String dbName = "";
+Database? db;
+String? dbName;
+String? dbDirectory;
 
 main(List<String> args) async {
-  Repl repl = Repl(prompt: '>>> ', continuation: '... ', validator: validator);
+  await initCouchbaseLite();
+
+  final Repl repl = Repl(continuation: '... ', validator: validator);
 
   // printStringList(args);
 
   if (args.isNotEmpty) {
-    dbName = args[0];
-    print("-- Database: $dbName");
+    final path = args[0].trim();
+    if (path.isEmpty) {
+      throw Exception('Path is empty');
+    }
+    setDbLocation(path);
+    printResponse("Database: $path");
   }
 
-  await for (var x in repl.runAsync()) {
-    String replCommand = x.trim();
-    if (replCommand.isEmpty) continue;
+  printPrompt();
 
-    if (replCommand == 'throw;') throw "-- Oh no!";
-    if (replCommand == 'exit;') throw "-- Bye bye";
-    if (replCommand == 'quit;') throw "-- Quiting!";
+  await for (final rawCommand in repl.runAsync()) {
+    final String command =
+        rawCommand.substring(0, rawCommand.length - 1).trim();
+    if (command.isEmpty) continue;
 
-    // DB operations
-    if (replCommand == 'open;') db = await openDatabase(dbName);
+    try {
+      if (command == 'throw') {
+        throw "-- Oh no!";
+      } else if (command == 'exit') {
+        printResponse("Bye bye");
+        break;
+      } else if (command == 'quit') {
+        printResponse("Quiting!");
+        break;
+      }
+      // DB operations
+      else if (command.startsWith('open')) {
+        final path = command.substring(4).trim();
+        if (path.isNotEmpty) {
+          setDbLocation(path);
+        }
 
-    if (replCommand == 'test;') await saveDocument(db, x);
+        if (dbName == null) {
+          printResponse("No database specified");
+          continue;
+        }
+        db = await openDatabase(dbName!, dbDirectory!);
+        printResponse('Opened database at ${p.relative(db!.path!)}.');
+      } else if (command == 'test') {
+        await saveDocument(useDb(), rawCommand);
+      } else if (command.contains('save')) {
+        await saveDocument(useDb(), rawCommand);
+      } else if (command == 'list') {
+        await listDocuments(useDb());
+      } else if (command == 'listall') {
+        await listAllDocuments(useDb());
+      } else if (command == 'delete') {
+        await deleteDatabase(useDb());
+        db = null;
+      } else if (command == 'close') {
+        await closeDatabase(useDb());
+        db = null;
+      } else {
+        printResponse("Unknown command: $command");
+      }
+    } on DatabaseNotOpenException {
+      printResponse('Database is not not open.');
+    }
 
-    if (replCommand.contains('save;')) await saveDocument(db, x);
-
-    if (replCommand == 'list;') await listDocuments(db);
-
-    if (replCommand == 'listall;') await listAllDocuments(db);
-
-    if (replCommand == 'close;') await closeDatabase(db);
-
-    print(x); // reflect the whole string as entered
-
+    printPrompt();
   }
+}
+
+void printPrompt() {
+  stdout.write('>>> ');
+}
+
+void printResponse(String response) {
+  print('-- $response');
 }
 
 bool validator(String str) {
@@ -52,11 +97,42 @@ void printStringList(List<String> list) {
   print(list);
 }
 
-Future<Database> openDatabase(String dbname) async {
-  // await CouchbaseLiteDart.init(edition: Edition.community);
+void printJson(Object? value) {
+  print(const JsonEncoder.withIndent('  ').convert(value));
+}
+
+void printResult(Result result) {
+  printJson(result.toPlainMap());
+}
+
+Future<void> initCouchbaseLite() async {
   await CouchbaseLiteDart.init(edition: Edition.enterprise);
-  Database db = await Database.openAsync(dbname);
-  return db;
+
+  // Suppress warning that file logging is not configured.
+  Database.log.console.level = LogLevel.error;
+}
+
+void setDbLocation(String path) {
+  dbName = p.basename(path);
+  dbDirectory = p.dirname(path);
+}
+
+Database useDb() {
+  if (db == null) {
+    throw DatabaseNotOpenException();
+  }
+  return db!;
+}
+
+Future<Database> openDatabase(String dbName, String dbDirectory) async {
+  return await Database.openAsync(
+    dbName,
+    DatabaseConfiguration(directory: dbDirectory),
+  );
+}
+
+Future<void> deleteDatabase(Database db) async {
+  await db.delete();
 }
 
 Future<void> closeDatabase(Database db) async {
@@ -72,7 +148,8 @@ Future<void> saveDocument(Database db, String doctext) async {
 
   await db.saveDocument(doc);
 
-  print('Document ${doc.id} stored: ${doc.toJson()}');
+  print('Document ${doc.id} stored:');
+  printJson(doc.toPlainMap());
 }
 
 Future<void> listDocuments(Database db) async {
@@ -93,7 +170,7 @@ Future<void> listDocuments(Database db) async {
 
   await for (final result in resultSet.asStream()) {
     documentCount++;
-    print(result.toJson());
+    printResult(result);
   }
 
   print('$documentCount documents found');
@@ -111,8 +188,10 @@ Future<void> listAllDocuments(Database db) async {
 
   await for (final result in resultSet.asStream()) {
     documentCount++;
-    print(result.toJson());
+    printResult(result);
   }
 
   print('$documentCount documents found');
 }
+
+class DatabaseNotOpenException implements Exception {}
