@@ -27,8 +27,10 @@ Temporary Items
 src/app/release/
 
 =======
-# ide
-.idea/
+# ides
+*/.idea
+*/.vscode
+*/.dart_tool
 
 # Built application files
 *.apk
