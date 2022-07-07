@@ -52,6 +52,12 @@ close;
 quit;
 `
 
+Or,
+
+`
+exit;
+`
+
 
 ### Some example Dart CLI sessions
 
