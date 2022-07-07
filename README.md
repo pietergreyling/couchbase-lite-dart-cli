@@ -53,7 +53,10 @@ quit;
 `
 
 
-### An example Dart CLI session
+### Some example Dart CLI sessions
+
+![An example Dart CLI session](./screenshots/dart-cli-session-screenshot02.png?raw=true)
+
 
 ![An example Dart CLI session](./screenshots/dart-cli-session-screenshot.png?raw=true)
 
