@@ -35,12 +35,18 @@ main(List<String> args) async {
 
     try {
       if (command == 'throw') {
+        await closeDatabase(useDb());
+        db = null;
         throw "-- Oh no!";
       } else if (command == 'exit') {
         printResponse("Bye bye");
+        await closeDatabase(useDb());
+        db = null;
         break;
       } else if (command == 'quit') {
         printResponse("Quiting!");
+        await closeDatabase(useDb());
+        db = null;
         break;
       }
       // DB operations
@@ -64,6 +70,8 @@ main(List<String> args) async {
         await listDocuments(useDb());
       } else if (command == 'listall') {
         await listAllDocuments(useDb());
+      } else if (command == 'listallids') {
+        await listAllDocumentIds(useDb());
       } else if (command == 'delete') {
         await deleteDatabase(useDb());
         db = null;
@@ -173,10 +181,10 @@ Future<void> listDocuments(Database db) async {
     printResult(result);
   }
 
-  print('$documentCount documents found');
+  print('-- $documentCount documents found');
 }
 
-Future<void> listAllDocuments(Database db) async {
+Future<void> listAllDocumentIds(Database db) async {
   final query = const QueryBuilder()
       .select(
         SelectResult.expression(Meta.id),
@@ -191,7 +199,27 @@ Future<void> listAllDocuments(Database db) async {
     printResult(result);
   }
 
-  print('$documentCount documents found');
+  print('-- $documentCount documents found');
+}
+
+Future<void> listAllDocuments(Database db) async {
+  final query = await Query.fromN1ql(
+    db,
+    '''
+    SELECT *
+    FROM _
+    ''',
+  );
+
+  final resultSet = await query.execute();
+  int documentCount = 0;
+
+  await for (final result in resultSet.asStream()) {
+    documentCount++;
+    printResult(result);
+  }
+
+  print('-- $documentCount documents found');
 }
 
 class DatabaseNotOpenException implements Exception {}

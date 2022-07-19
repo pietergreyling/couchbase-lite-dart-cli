@@ -45,6 +45,10 @@ listall;
 `
 
 `
+listallids;
+`
+
+`
 close;
 `
 
@@ -65,6 +69,9 @@ exit;
 
 
 ![An example Dart CLI session](./screenshots/dart-cli-session-screenshot03.png?raw=true)
+
+
+![An example Dart CLI session](./screenshots/dart-cli-session-screenshot04.png?raw=true)
 
 
 ![An example Dart CLI session](./screenshots/dart-cli-session-screenshot.png?raw=true)
