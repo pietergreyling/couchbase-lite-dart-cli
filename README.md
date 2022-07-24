@@ -63,7 +63,7 @@ exit;
 `
 
 
-### Some example Couchbase Lite Dart CLI sessions
+### Some example Couchbase Lite Dart CLI session screenshots
 
 ![An example Dart CLI session](./screenshots/dart-cli-session-screenshot02.png?raw=true)
 
